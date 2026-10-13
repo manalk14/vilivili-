@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dotok Super Anne</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080a1c;
+    --ink: #eef0ff;
+    --muted: #9aa0c8;
+    --glass: rgba(255,255,255,.055);
+    --glass-2: rgba(255,255,255,.09);
+    --stroke: rgba(255,255,255,.12);
+    --violet: #7c5cff;
+    --cyan: #22d3ee;
+    --pink: #ff4ecd;
+    --amber: #ffb938;
+    --green: #34e3a0;
+    --red: #ff6b7a;
+    --grad: linear-gradient(110deg, var(--violet), var(--cyan));
+    --grad-hot: linear-gradient(110deg, var(--pink), var(--violet) 50%, var(--cyan));
+    --sans: "Sora", "Segoe UI", system-ui, sans-serif;
+    --mono: "JetBrains Mono", Consolas, "Courier New", monospace;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    line-height: 1.55;
+    overflow-x: hidden;
+  }
+
+  /* Soft moving light behind everything */
+  .aurora { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+  .aurora i {
+    position: absolute; border-radius: 50%; filter: blur(90px); opacity: .5;
+    animation: drift 18s ease-in-out infinite alternate;
+  }
+  .aurora i:nth-child(1) { width: 520px; height: 520px; background: var(--violet); top: -160px; left: -120px; }
+  .aurora i:nth-child(2) { width: 460px; height: 460px; background: var(--cyan); top: 18%; right: -160px; opacity: .32; animation-delay: -6s; }
+  .aurora i:nth-child(3) { width: 420px; height: 420px; background: var(--pink); bottom: -180px; left: 28%; opacity: .28; animation-delay: -12s; }
+  @keyframes drift { to { transform: translate(60px, 40px) scale(1.12); } }
+  .grid-bg {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background-image:
+      linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+    background-size: 44px 44px;
+    mask-image: radial-gradient(ellipse at 50% 20%, #000 20%, transparent 75%);
+    -webkit-mask-image: radial-gradient(ellipse at 50% 20%, #000 20%, transparent 75%);
+  }
+
+  .wrap { position: relative; z-index: 1; max-width: 980px; margin: 0 auto; padding: 44px 18px 80px; }
+
+  /* Header */
+  header { text-align: center; margin-bottom: 36px; }
+  .logo {
+    width: 62px; height: 62px; margin: 0 auto 18px; border-radius: 18px;
+    background: var(--grad-hot);
+    display: grid; place-items: center;
+    box-shadow: 0 10px 40px rgba(124,92,255,.55), inset 0 1px 0 rgba(255,255,255,.4);
+  }
+  .logo svg { width: 30px; height: 30px; }
+  h1 {
+    margin: 0;
+    font-size: clamp(2.2rem, 7vw, 4rem);
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    line-height: 1.05;
+    background: linear-gradient(100deg, #fff 10%, #c9bfff 45%, var(--cyan) 90%);
+    -webkit-background-clip: text; background-clip: text;
+    color: transparent;
+  }
+  .tagline { margin: 14px auto 0; max-width: 520px; color: var(--muted); font-size: 1.02rem; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    margin-top: 18px; padding: 6px 14px; border-radius: 999px;
+    background: var(--glass); border: 1px solid var(--stroke);
+    font-size: .8rem; color: var(--muted);
+  }
+  .pill b { color: var(--green); font-weight: 600; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 10px var(--green); }
+
+  /* Cards */
+  .card {
+    background: var(--glass);
+    border: 1px solid var(--stroke);
+    border-radius: 22px;
+    padding: 24px;
+    margin-bottom: 20px;
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    box-shadow: 0 20px 60px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.07);
+  }
+  .card-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+  .card-head h2 { margin: 0; font-size: 1.05rem; font-weight: 600; display: flex; align-items: center; gap: 12px; }
+  .step {
+    width: 30px; height: 30px; border-radius: 10px; background: var(--grad);
+    display: grid; place-items: center; font-size: .85rem; font-weight: 700; color: #fff;
+  }
+  .tools { display: flex; gap: 8px; }
+
+  /* Buttons */
+  .btn {
+    font-family: var(--sans);
+    border: 1px solid var(--stroke);
+    background: var(--glass-2);
+    color: var(--ink);
+    padding: 9px 16px;
+    border-radius: 12px;
+    font-size: .88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform .15s, background .2s, border-color .2s;
+  }
+  .btn:hover { background: rgba(255,255,255,.14); border-color: rgba(255,255,255,.25); }
+  .btn:active { transform: scale(.97); }
+  .btn:focus-visible, .seg input:focus-visible + span, textarea:focus-visible, input[type=number]:focus-visible {
+    outline: 2px solid var(--cyan); outline-offset: 2px;
+  }
+  .btn.done { background: rgba(52,227,160,.2); border-color: var(--green); color: var(--green); }
+  .go {
+    width: 100%; margin-top: 22px; padding: 17px; border: 0; border-radius: 16px;
+    font-family: var(--sans); font-size: 1.05rem; font-weight: 700; color: #fff; cursor: pointer;
+    background: var(--grad-hot); background-size: 200% 100%;
+    box-shadow: 0 12px 36px rgba(124,92,255,.5), inset 0 1px 0 rgba(255,255,255,.35);
+    transition: transform .15s, background-position .5s, box-shadow .2s;
+  }
+  .go:hover { background-position: 100% 0; box-shadow: 0 16px 44px rgba(255,78,205,.45), inset 0 1px 0 rgba(255,255,255,.35); }
+  .go:active { transform: scale(.985); }
+  .go:disabled { opacity: .45; cursor: not-allowed; box-shadow: none; }
+
+  /* Input */
+  textarea {
+    width: 100%; min-height: 190px; resize: vertical;
+    padding: 16px; border-radius: 16px;
+    background: rgba(5,7,22,.6);
+    border: 1px solid var(--stroke);
+    color: var(--ink);
+    font: 500 15px/1.7 var(--mono);
+    transition: border-color .2s, box-shadow .2s;
+  }
+  textarea::placeholder { color: #5d6390; }
+  textarea:focus { border-color: var(--violet); box-shadow: 0 0 0 4px rgba(124,92,255,.2); outline: none; }
+
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-top: 14px; }
+  .stat {
+    background: rgba(5,7,22,.45); border: 1px solid var(--stroke); border-radius: 14px; padding: 12px 14px;
+  }
+  .stat small { display: block; color: var(--muted); font-size: .75rem; }
+  .stat strong { font-size: 1.5rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .stat.ok strong { color: var(--green); }
+  .stat.warn strong { color: var(--amber); }
+  .stat.bad strong { color: var(--red); }
+  .skipped { margin-top: 10px; font: 400 .8rem var(--mono); color: var(--red); min-height: 1em; word-break: break-all; }
+
+  /* Settings */
+  .settings { display: grid; grid-template-columns: 1fr; gap: 24px; }
+  .label { font-size: .82rem; color: var(--muted); margin-bottom: 10px; font-weight: 600; }
+  .seg {
+    display: inline-flex; flex-wrap: wrap; gap: 4px; padding: 4px;
+    background: rgba(5,7,22,.55); border: 1px solid var(--stroke); border-radius: 16px;
+  }
+  .seg label { cursor: pointer; }
+  .seg input { position: absolute; opacity: 0; pointer-events: none; }
+  .seg span {
+    display: block; padding: 10px 18px; border-radius: 12px;
+    font-size: .9rem; font-weight: 600; color: var(--muted);
+    transition: color .2s, background .2s;
+    font-variant-numeric: tabular-nums;
+  }
+  .seg label:hover span { color: var(--ink); }
+  .seg input:checked + span {
+    color: #fff; background: var(--grad);
+    box-shadow: 0 6px 18px rgba(124,92,255,.45);
+  }
+  #customWrap { display: none; margin-top: 12px; align-items: center; gap: 10px; color: var(--muted); font-size: .9rem; }
+  #customWrap.show { display: flex; }
+  input[type=number] {
+    width: 110px; padding: 10px 12px; border-radius: 12px;
+    background: rgba(5,7,22,.6); border: 1px solid var(--stroke);
+    color: var(--ink); font: 600 1rem var(--mono);
+  }
+
+  .switch { display: flex; align-items: center; gap: 14px; cursor: pointer; }
+  .switch input { position: absolute; opacity: 0; }
+  .track {
+    width: 50px; height: 28px; border-radius: 999px; background: rgba(255,255,255,.14);
+    position: relative; transition: background .25s; flex: none;
+  }
+  .track::after {
+    content: ""; position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%;
+    background: #fff; transition: transform .25s; box-shadow: 0 2px 6px rgba(0,0,0,.4);
+  }
+  .switch input:checked + .track { background: var(--green); }
+  .switch input:checked + .track::after { transform: translateX(22px); }
+  .switch input:focus-visible + .track { outline: 2px solid var(--cyan); outline-offset: 2px; }
+  .switch em { font-style: normal; font-weight: 600; font-size: .92rem; }
+  .switch small { display: block; color: var(--muted); font-size: .78rem; font-weight: 400; }
+
+  .preview {
+    margin-top: 4px; padding: 14px 16px; border-radius: 14px;
+    background: rgba(5,7,22,.55); border: 1px dashed var(--stroke);
+    font: 400 .85rem/1.7 var(--mono); color: var(--cyan); white-space: pre; overflow-x: auto;
+  }
+
+  /* Results */
+  #results[hidden] { display: none; }
+  .summary {
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px;
+    margin-bottom: 18px;
+  }
+  .summary h2 { margin: 0; font-size: 1.35rem; font-weight: 700; }
+  .summary p { margin: 2px 0 0; color: var(--muted); font-size: .88rem; }
+  .sets { display: grid; gap: 14px; }
+  .set {
+    --c1: var(--violet); --c2: var(--cyan);
+    position: relative; border-radius: 18px; overflow: hidden;
+    background: rgba(5,7,22,.55); border: 1px solid var(--stroke);
+    animation: rise .5s cubic-bezier(.2,.8,.2,1) both;
+  }
+  .set::before {
+    content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+    background: linear-gradient(var(--c1), var(--c2));
+  }
+  .set:nth-child(6n+2) { --c1: var(--cyan); --c2: var(--green); }
+  .set:nth-child(6n+3) { --c1: var(--pink); --c2: var(--violet); }
+  .set:nth-child(6n+4) { --c1: var(--amber); --c2: var(--pink); }
+  .set:nth-child(6n+5) { --c1: var(--green); --c2: var(--cyan); }
+  .set:nth-child(6n+6) { --c1: var(--violet); --c2: var(--pink); }
+  @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+  .set-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 14px 16px 0 22px; }
+  .set-name { font-weight: 700; display: flex; align-items: center; gap: 10px; }
+  .count {
+    font-size: .75rem; font-weight: 600; padding: 3px 10px; border-radius: 999px;
+    background: var(--glass-2); color: var(--muted);
+  }
+  .set pre {
+    margin: 0; padding: 12px 16px 18px 22px;
+    font: 500 14.5px/1.75 var(--mono); color: #dfe3ff;
+    white-space: pre-wrap; word-break: break-all; user-select: all;
+  }
+  .empty { text-align: center; color: var(--muted); padding: 30px 0; }
+
+  /* Toast */
+  .toast {
+    position: fixed; left: 50%; bottom: 28px; z-index: 10;
+    transform: translate(-50%, 30px); opacity: 0; pointer-events: none;
+    padding: 12px 22px; border-radius: 14px; font-size: .9rem; font-weight: 600;
+    background: rgba(20,24,52,.92); border: 1px solid var(--stroke);
+    box-shadow: 0 14px 40px rgba(0,0,0,.5); backdrop-filter: blur(12px);
+    transition: transform .3s, opacity .3s;
+  }
+  .toast.show { transform: translate(-50%, 0); opacity: 1; }
+
+  footer { text-align: center; color: #5d6390; font-size: .8rem; margin-top: 30px; }
+
+  @media (max-width: 560px) {
+    .card { padding: 18px; border-radius: 18px; }
+    .seg span { padding: 9px 13px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
+<div class="grid-bg" aria-hidden="true"></div>
+
+<div class="wrap">
+  <header>
+    <div class="logo" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 7h9M4 12h16M4 17h11"/><circle cx="19" cy="7" r="1.6" fill="#fff" stroke="none"/><circle cx="19" cy="17" r="1.6" fill="#fff" stroke="none"/>
+      </svg>
+    </div>
+    <h1>Dotok Super Anne</h1>
+    <p class="tagline">Drop in your UAE numbers. Get clean, comma-ready sets in one click.</p>
+    <div class="pill"><span class="dot"></span> Runs in your browser <b>&middot; nothing is uploaded</b></div>
+  </header>
+
+  <!-- Step 1 -->
+  <section class="card">
+    <div class="card-head">
+      <h2><span class="step">1</span> Add your numbers</h2>
+      <div class="tools">
+        <button class="btn" id="paste" type="button">Paste from clipboard</button>
+        <button class="btn" id="clear" type="button">Clear</button>
+      </div>
+    </div>
+    <textarea id="input" spellcheck="false" placeholder="971*********&#10;971*********, 971*********&#10;Any layout works. Only 12-digit numbers are used."></textarea>
+    <div class="stats">
+      <div class="stat ok"><small>Valid 12-digit</small><strong id="sValid">0</strong></div>
+      <div class="stat warn"><small>Duplicates</small><strong id="sDup">0</strong></div>
+      <div class="stat bad"><small>Skipped</small><strong id="sBad">0</strong></div>
+    </div>
+    <div class="skipped" id="skipped"></div>
+  </section>
+
+  <!-- Step 2 -->
+  <section class="card">
+    <div class="card-head"><h2><span class="step">2</span> Choose how to split</h2></div>
+    <div class="settings">
+      <div>
+        <div class="label">Numbers per set</div>
+        <div class="seg" role="radiogroup" aria-label="Numbers per set" id="sizeSeg">
+          <label><input type="radio" name="size" value="10" checked><span>10</span></label>
+          <label><input type="radio" name="size" value="20"><span>20</span></label>
+          <label><input type="radio" name="size" value="50"><span>50</span></label>
+          <label><input type="radio" name="size" value="100"><span>100</span></label>
+          <label><input type="radio" name="size" value="custom"><span>Custom</span></label>
+          <label><input type="radio" name="size" value="all"><span>Single list</span></label>
+        </div>
+        <div id="customWrap"><span>Numbers per set</span><input type="number" id="customSize" min="1" value="25" aria-label="Custom set size"></div>
+      </div>
+
+      <div>
+        <div class="label">Format</div>
+        <div class="seg" role="radiogroup" aria-label="Format">
+          <label><input type="radio" name="format" value="line" checked><span>Comma line</span></label>
+          <label><input type="radio" name="format" value="column"><span>One per row</span></label>
+        </div>
+        <div class="preview" id="preview" style="margin-top:12px"></div>
+      </div>
+
+      <label class="switch">
+        <input type="checkbox" id="dedupe">
+        <span class="track"></span>
+        <span><em>Remove duplicates</em><small>Keeps the first copy of each number. Order stays the same.</small></span>
+      </label>
+    </div>
+    <button class="go" id="go" type="button" disabled>Split numbers</button>
+  </section>
+
+  <!-- Results -->
+  <section class="card" id="results" hidden>
+    <div class="summary">
+      <div>
+        <h2 id="resultTitle">Results</h2>
+        <p id="resultSub"></p>
+      </div>
+      <div class="tools">
+        <button class="btn" id="download" type="button">Download .txt</button>
+        <button class="btn" id="copyAll" type="button">Copy all sets</button>
+      </div>
+    </div>
+    <div class="sets" id="sets"></div>
+  </section>
+
+  <footer>Dotok Super Anne &middot; numbers are never changed, only grouped.</footer>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  const radio = name => document.querySelector(`input[name="${name}"]:checked`).value;
+  let currentSets = [];
+
+  // Numbers stay as text, so they can never be altered.
+  function parseInput(text) {
+    const found = text.match(/\d+/g) || [];
+    const valid = [], invalid = [];
+    found.forEach(n => (n.length === 12 ? valid : invalid).push(n));
+    return { valid, invalid };
+  }
+
+  function toast(msg) {
+    const t = $('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toast.id);
+    toast.id = setTimeout(() => t.classList.remove('show'), 1800);
+  }
+
+  function updateStats() {
+    const { valid, invalid } = parseInput($('input').value);
+    const unique = new Set(valid).size;
+    $('sValid').textContent = valid.length;
+    $('sDup').textContent = valid.length - unique;
+    $('sBad').textContent = invalid.length;
+    $('skipped').textContent = invalid.length
+      ? 'Skipped (not 12 digits): ' + invalid.slice(0, 4).join(', ') + (invalid.length > 4 ? ' ...' : '')
+      : '';
+    $('go').disabled = valid.length === 0;
+    updatePreview();
+  }
+
+  function getSize(total) {
+    const v = radio('size');
+    if (v === 'all') return Math.max(total, 1);
+    if (v === 'custom') return Math.max(1, parseInt($('customSize').value, 10) || 1);
+    return parseInt(v, 10);
+  }
+
+  function formatSet(nums) {
+    return radio('format') === 'column' ? nums.map(n => n + ',').join('\n') : nums.join(',');
+  }
+
+  function updatePreview() {
+      const sample = ['971*********', '971*********', '971*********'];
+    $('preview').textContent = formatSet(sample);
+  }
+
+  function split() {
+    let { valid } = parseInput($('input').value);
+    if ($('dedupe').checked) valid = [...new Set(valid)];
+
+    const box = $('sets');
+    box.innerHTML = '';
+    $('results').hidden = false;
+
+    if (!valid.length) {
+      box.innerHTML = '<div class="empty">No 12-digit numbers found.</div>';
+      currentSets = [];
+      return;
+    }
+
+    const size = getSize(valid.length);
+    currentSets = [];
+    for (let i = 0; i < valid.length; i += size) currentSets.push(valid.slice(i, i + size));
+
+    currentSets.forEach((set, idx) => {
+      const text = formatSet(set);
+      const el = document.createElement('article');
+      el.className = 'set';
+      el.style.animationDelay = Math.min(idx * 60, 600) + 'ms';
+
+      const top = document.createElement('div');
+      top.className = 'set-top';
+      const name = document.createElement('div');
+      name.className = 'set-name';
+      name.textContent = currentSets.length === 1 ? 'Single list' : 'Set ' + (idx + 1);
+      const count = document.createElement('span');
+      count.className = 'count';
+      count.textContent = set.length + (set.length === 1 ? ' number' : ' numbers');
+      name.appendChild(count);
+
+      const btn = document.createElement('button');
+      btn.className = 'btn';
+      btn.type = 'button';
+      btn.textContent = 'Copy';
+      btn.addEventListener('click', () => copyText(text, btn, 'Copy'));
+      top.append(name, btn);
+
+      const pre = document.createElement('pre');
+      pre.textContent = text;
+      el.append(top, pre);
+      box.appendChild(el);
+    });
+
+    $('resultTitle').textContent = currentSets.length === 1
+      ? 'Your list is ready'
+      : currentSets.length + ' sets are ready';
+    $('resultSub').textContent = valid.length + ' numbers, ' + (currentSets.length === 1 ? 'in one list' : 'about ' + size + ' per set');
+    $('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  async function copyText(text, btn, original) {
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch (e) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      ta.remove();
+    }
+    btn.textContent = 'Copied';
+    btn.classList.add('done');
+    toast('Copied to clipboard');
+    setTimeout(() => { btn.textContent = original; btn.classList.remove('done'); }, 1500);
+  }
+
+  function allText() {
+    return currentSets.map(formatSet).join(radio('format') === 'column' ? '\n\n' : '\n');
+  }
+
+  // Events
+  $('input').addEventListener('input', updateStats);
+  document.querySelectorAll('input[name="size"]').forEach(r =>
+    r.addEventListener('change', () => $('customWrap').classList.toggle('show', radio('size') === 'custom')));
+  document.querySelectorAll('input[name="format"]').forEach(r => r.addEventListener('change', updatePreview));
+  $('dedupe').addEventListener('change', updateStats);
+  $('go').addEventListener('click', split);
+
+  $('paste').addEventListener('click', async () => {
+    try {
+      $('input').value = await navigator.clipboard.readText();
+      updateStats();
+      toast('Pasted from clipboard');
+    } catch (e) {
+      toast('Clipboard blocked. Paste with Ctrl+V instead.');
+      $('input').focus();
+    }
+  });
+
+  $('clear').addEventListener('click', () => {
+    $('input').value = '';
+    $('results').hidden = true;
+    $('sets').innerHTML = '';
+    currentSets = [];
+    updateStats();
+  });
+
+  $('copyAll').addEventListener('click', e => { if (currentSets.length) copyText(allText(), e.target, 'Copy all sets'); });
+
+  $('download').addEventListener('click', () => {
+    if (!currentSets.length) return;
+    const blob = new Blob([allText()], { type: 'text/plain' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'numbers.txt';
+    a.click();
+    URL.revokeObjectURL(a.href);
+    toast('Downloaded numbers.txt');
+  });
+
+  updateStats();
+</script>
+</body>
+</html>
